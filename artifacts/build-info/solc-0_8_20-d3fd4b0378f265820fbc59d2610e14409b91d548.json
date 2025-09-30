@@ -1,0 +1,35 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_20-d3fd4b0378f265820fbc59d2610e14409b91d548",
+  "solcVersion": "0.8.20",
+  "solcLongVersion": "0.8.20+commit.a1b79de6",
+  "userSourceNameMap": {
+    "contracts/Verifier.sol": "project/contracts/Verifier.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "shanghai",
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/Verifier.sol": {
+        "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.20;\n\ncontract Verifier {\n    mapping(bytes32 => string) public documents;\n\n    function register(bytes32 hash, string memory uri) public {\n        documents[hash] = uri;\n    }\n\n    function isRegistered(bytes32 hash) public view returns (bool) {\n        return bytes(documents[hash]).length > 0;\n    }\n}\n"
+      }
+    }
+  }
+}

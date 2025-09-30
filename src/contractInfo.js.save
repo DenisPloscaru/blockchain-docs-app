@@ -1,0 +1,19 @@
+// Replace the address after you deploy locally.
+export const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+
+export const CONTRACT_ABI = [
+  {
+    "inputs":[{"internalType":"bytes32","name":"hash","type":"bytes32"}],
+    "name":"register",
+    "outputs":[],
+    "stateMutability":"nonpayable",
+    "type":"function"
+  },
+  {
+    "inputs":[{"internalType":"bytes32","name":"hash","type":"bytes32"}],
+    "name":"isRegistered",
+    "outputs":[{"internalType":"bool","name":"","type":"bool"}],
+    "stateMutability":"view",
+    "type":"function"
+  }
+];
