@@ -74,7 +74,7 @@ export default function App() {
     };
   }, []);
 
-  const correctNetwork = chainId === "0x7a69" || chainId === "31337"; // Hardhat local
+  const correctNetwork = chainId === "0xaa36a7"; // Sepolia 11155111
 
   // --- UI helpers ---
   function toast(msg, kind = "info") {
@@ -226,14 +226,14 @@ export default function App() {
         <header>
           <div>
             <div className="title">Blockchain Document Verifier</div>
-            <div className="sub">Hash-only proof of existence • Local Hardhat chain</div>
+            <div className="sub">Hash-only proof of existence • Sepolia Testnet</div>
           </div>
 
           <div style={{display:"flex", gap:10, alignItems:"center"}}>
             {account ? (
               <>
                 <span className="badge">
-                  {shorten(account)} {correctNetwork ? "• 31337" : <span className="warn">• wrong net</span>}
+                  {shorten(account)} {correctNetwork ? "• Sepolia" : <span className="warn">• wrong net</span>}
                 </span>
                 <button className="btn ghost" onClick={disconnectWallet}>Logout</button>
               </>
@@ -244,7 +244,7 @@ export default function App() {
         </header>
 
         {!correctNetwork && account && (
-          <div className="status error">Please switch MetaMask to <b>Localhost 8545 (chainId 31337)</b>.</div>
+          <div className="status error">Please switch MetaMask to <b>Sepolia (chainId 31337)</b>.</div>
         )}
 
         <div className="row">
@@ -320,10 +320,10 @@ export default function App() {
             </div>
             <div>
               <div className="k">Network</div>
-              <div className="v">{correctNetwork ? "Localhost 8545 (31337)" : "Not 31337"}</div>
+              <div className="v">{correctNetwork ? "Sepolia" : "Not Sepolia"}</div>
             </div>
             <div>
-              <div className="k">Owner (current)</div>
+              <div className="k">Connected To (current)</div>
               <div className="v">{account || "(not connected)"}</div>
             </div>
 
