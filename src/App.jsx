@@ -274,8 +274,11 @@ function ipfsGateway(u) {
         </header>
 
         {!correctNetwork && account && (
-          <<div className="status error">Please switch MetaMask to <b>Sepolia (chainId 11155111)</b>.</div>
-        )}
+  <div className="status error">
+    Please switch MetaMask to <b>Sepolia (chainId 11155111)</b>.
+  </div>
+)}
+
 
         <div className="row">
           {/* Left: upload + actions */}
@@ -385,7 +388,7 @@ function ipfsGateway(u) {
     <tbody>
       {(!myDocs || myDocs.length === 0) && (
         <tr>
-          <td colSpan="3" className="hint" style={{padding:20}}>
+          <td colSpan={3} className="hint" style={{padding:20}}>
             {account ? "(No on-chain docs yet)" : "(Connect wallet to load)"}
           </td>
         </tr>
@@ -402,5 +405,12 @@ function ipfsGateway(u) {
         </tr>
       ))}
     </tbody>
-  </table>
+</table>
 </div>
+        </aside>   
+      </div>       
+
+    </div>         
+  </div>           
+);
+}
