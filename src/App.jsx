@@ -26,6 +26,13 @@ export default function App() {
   const [chainId, setChainId] = useState("");      // network id
   const [status, setStatus] = useState("");
   const [statusKind, setStatusKind] = useState("info"); // info | success | error
+  const [myDocs, setMyDocs] = useState([]);
+const [loadingDocs, setLoadingDocs] = useState(false);
+
+function ipfsGateway(u) {
+  if (!u) return "";
+  return u.startsWith("ipfs://") ? `https://ipfs.io/ipfs/${u.slice(7)}` : u;
+}
 
   const [file, setFile] = useState(null);
   const [hash, setHash] = useState("");
@@ -59,6 +66,7 @@ export default function App() {
 
     const handleAccountsChanged = (accs) => {
       setAccount(accs?.[0] || "");
+      loadMyDocs();
     };
     const handleChainChanged = (hexId) => {
       setChainId(hexId);
@@ -96,6 +104,7 @@ export default function App() {
       const id = await window.ethereum.request({ method: "eth_chainId" });
       setChainId(id);
       toast("Wallet connected", "success");
+      await loadMyDocs();
     } catch (e) {
       toast(e?.message || "Wallet connection failed", "error");
     }
@@ -128,7 +137,7 @@ export default function App() {
   // --- Actions ---
   async function registerNow() {
     if (!provider || !account) return toast("Connect wallet first", "error");
-    if (!correctNetwork) return toast("Switch MetaMask to Localhost 8545 (chainId 31337)", "error");
+    if (!correctNetwork) return toast("Switch MetaMask to Sepolia (chainId 11155111)", "error");
     if (!hash) return toast("Choose a file first", "error");
     if (!uri) return toast("Upload to IPFS first", "error");
     try {
@@ -142,6 +151,7 @@ export default function App() {
       await tx.wait();
 
       toast("Registered ✅", "success");
+      await loadMyDocs();
       const entry = { hash, when: Date.now(), txHash: tx.hash, owner: account, uri };
       const next = [entry, ...history].slice(0, 50);
       setHistory(next);
@@ -167,6 +177,26 @@ export default function App() {
       setWorking(false);
     }
   }
+  
+  async function loadMyDocs() {
+  try {
+    if (!contract || !account) { setMyDocs([]); return; }
+    setLoadingDocs(true);
+    const hashes = await contract.getUserDocs(account);
+    const rows = await Promise.all(
+      hashes.map(async (h) => {
+        const [uri, exists] = await contract.docs(h);
+        return { hash: h, uri, exists, gateway: ipfsGateway(uri) };
+      })
+    );
+    setMyDocs(rows);
+  } catch (e) {
+    toast(e?.message || "Failed to load on-chain documents", "error");
+  } finally {
+    setLoadingDocs(false);
+  }
+}
+
 
   function copyHash() {
     if (!hash) return;
@@ -244,7 +274,7 @@ export default function App() {
         </header>
 
         {!correctNetwork && account && (
-          <div className="status error">Please switch MetaMask to <b>Sepolia (chainId 31337)</b>.</div>
+          <<div className="status error">Please switch MetaMask to <b>Sepolia (chainId 11155111)</b>.</div>
         )}
 
         <div className="row">
@@ -314,10 +344,19 @@ export default function App() {
 
           {/* Right: details + history */}
           <aside className="card uibox grid" style={{gap:16}}>
-            <div>
-              <div className="k">Contract</div>
-              <div className="v">{CONTRACT_ADDRESS}</div>
+           <div>
+             <div className="k">Contract</div>
+               <div className="v">
+                <a
+                  href={`https://sepolia.etherscan.io/address/${CONTRACT_ADDRESS}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                 {CONTRACT_ADDRESS}
+                </a>
+              </div>
             </div>
+
             <div>
               <div className="k">Network</div>
               <div className="v">{correctNetwork ? "Sepolia" : "Not Sepolia"}</div>
@@ -328,39 +367,40 @@ export default function App() {
             </div>
 
             <div style={{marginTop:8, display:"flex", alignItems:"center", justifyContent:"space-between"}}>
-              <div className="k">Recent registrations (local)</div>
-              <button className="btn ghost" onClick={clearHistory} disabled={!history.length}>Clear</button>
-            </div>
-            <div className="card" style={{padding:0, background:"transparent"}}>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Time</th>
-                    <th>Hash (short)</th>
-                    <th>Tx</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {history.length === 0 && (
-                    <tr>
-                      <td colSpan="3" className="hint" style={{padding:20}}>(No local entries yet)</td>
-                    </tr>
-                  )}
-                  {history.map((h, i) => (
-                    <tr key={i}>
-                      <td>{formatTs(h.when)}</td>
-                      <td><span className="pill">{shorten(h.hash, 8)}</span></td>
-                      <td>{h.txHash ? <a href="#" onClick={(e)=>e.preventDefault()} className="hint">{shorten(h.txHash, 8)}</a> : "-"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+  <div className="k">My Documents (on-chain)</div>
+  <button className="btn ghost" onClick={loadMyDocs} disabled={loadingDocs || !account}>
+    {loadingDocs ? "Loading…" : "Refresh"}
+  </button>
+</div>
 
-            <div className="hint">Note: this table is stored in <code>localStorage</code>. The source of truth is the smart contract.</div>
-          </aside>
-        </div>
-      </div>
-    </div>
-  );
-}
+<div className="card" style={{padding:0, background:"transparent"}}>
+  <table>
+    <thead>
+      <tr>
+        <th>Hash (short)</th>
+        <th>URI</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {(!myDocs || myDocs.length === 0) && (
+        <tr>
+          <td colSpan="3" className="hint" style={{padding:20}}>
+            {account ? "(No on-chain docs yet)" : "(Connect wallet to load)"}
+          </td>
+        </tr>
+      )}
+      {myDocs.map((d, i) => (
+        <tr key={i}>
+          <td><span className="pill">{shorten(d.hash, 8)}</span></td>
+          <td className="v">
+            {d.uri ? (
+              d.gateway ? <a href={d.gateway} target="_blank" rel="noreferrer">{d.uri}</a> : d.uri
+            ) : "-"}
+          </td>
+          <td>{d.exists ? "✅" : "❌"}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
