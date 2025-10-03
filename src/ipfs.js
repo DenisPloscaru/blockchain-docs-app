@@ -4,7 +4,8 @@ export async function uploadFileToIPFS(file) {
 
   const url = "https://api.pinata.cloud/pinning/pinFileToIPFS";
   const formData = new FormData();
-  formData.append("file", file);
+  formData.append("file", file, file.name);
+  formData.append("pinataMetadata", JSON.stringify({ name: file.name }));
 
   const res = await fetch(url, {
     method: "POST",

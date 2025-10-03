@@ -381,8 +381,8 @@ function ipfsGateway(u) {
     <thead>
       <tr>
         <th>Hash (short)</th>
-        <th>URI</th>
-        <th>Status</th>
+        <th>File Name</th>
+        <th>Download</th>
       </tr>
     </thead>
     <tbody>
@@ -395,18 +395,32 @@ function ipfsGateway(u) {
       )}
       {myDocs.map((d, i) => (
         <tr key={i}>
+          {/* short hash pill */}
           <td><span className="pill">{shorten(d.hash, 8)}</span></td>
-          <td className="v">
-            {d.uri ? (
-              d.gateway ? <a href={d.gateway} target="_blank" rel="noreferrer">{d.uri}</a> : d.uri
+          
+          {/* file name */}
+          <td className="v">{d.name || "Document"}</td>
+          
+          {/* download button */}
+          <td>
+            {d.gateway ? (
+              <a
+                className="btn ghost"
+                href={d.gateway}
+                target="_blank"
+                rel="noreferrer"
+                download={d.name || "Document"}
+              >
+                Download
+              </a>
             ) : "-"}
           </td>
-          <td>{d.exists ? "✅" : "❌"}</td>
         </tr>
       ))}
     </tbody>
-</table>
+  </table>
 </div>
+
         </aside>   
       </div>       
 
