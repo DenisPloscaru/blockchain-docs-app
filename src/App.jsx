@@ -255,7 +255,6 @@ function ipfsGateway(u) {
       <div className="wrap">
         <header>
           <div>
-            <div className="title">Blockchain Document Verifier</div>
             <div className="sub">Hash-only proof of existence • Sepolia Testnet</div>
           </div>
 
@@ -308,15 +307,6 @@ function ipfsGateway(u) {
             </div>
 
             <div className="actions">
-              <button className="btn brand" onClick={registerNow} disabled={!account || !hash || !uri || !correctNetwork || working}>
-                {working ? "Working…" : "Register (hash + URI)"}
-              </button>
-              <button className="btn ghost" onClick={verifyNow} disabled={!hash || working}>Verify</button>
-            </div>
-
-            {status && <div className={`status ${statusKind}`}>{status}</div>}
-
-            <div className="actions">
               <button className="btn ghost" disabled={!file || working} onClick={async () => {
                 try {
                   setWorking(true);
@@ -333,7 +323,13 @@ function ipfsGateway(u) {
               }}>
                 Upload to IPFS
               </button>
+              <button className="btn brand" onClick={registerNow} disabled={!account || !hash || !uri || !correctNetwork || working}>
+                {working ? "Working…" : "Register (hash + URI)"}
+              </button>
+              <button className="btn ghost" onClick={verifyNow} disabled={!hash || working}>Verify</button>
             </div>
+
+            {status && <div className={`status ${statusKind}`}>{status}</div>}
 
             {uri && (
               <div className="grid" style={{gap:10}}>
