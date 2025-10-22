@@ -51,17 +51,17 @@ function ipfsGateway(u) {
     return new ethers.BrowserProvider(window.ethereum);
   }, []);
 
-  // Read-only contract (for verify). For writes we’ll connect a signer.
+  // Read-only contract 
   const contract = useMemo(() => {
     if (!provider) return null;
     return new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
   }, [provider]);
 
-  // --- Ethereum wiring (no auto-pick of accounts) ---
+  // --- Ethereum wiring ---
   useEffect(() => {
     if (!window.ethereum) return;
 
-    // only read chain id on load
+   
     window.ethereum.request({ method: "eth_chainId" }).then(setChainId);
 
     const handleAccountsChanged = (accs) => {
@@ -70,7 +70,7 @@ function ipfsGateway(u) {
     };
     const handleChainChanged = (hexId) => {
       setChainId(hexId);
-      // full reload so ethers/MetaMask point to correct net
+      // full reload 
       window.location.reload();
     };
 
@@ -143,7 +143,7 @@ function ipfsGateway(u) {
     try {
       setWorking(true);
       // Let ethers use the currently active MetaMask account
-      const signer = await provider.getSigner(); // no param = active account
+      const signer = await provider.getSigner(); // active account
       const c = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
       toast("Sending transaction…", "info");
@@ -209,7 +209,7 @@ function ipfsGateway(u) {
     setHistory([]);
   }
 
-  // --- UI ---
+  // --- UI 
   return (
     <div>
       <style>{`
@@ -341,7 +341,7 @@ function ipfsGateway(u) {
             )}
           </section>
 
-          {/* Right: details + history */}
+          {/* history */}
           <aside className="card uibox grid" style={{gap:16}}>
            <div>
              <div className="k">Contract</div>
