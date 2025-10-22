@@ -9,11 +9,11 @@ async function main() {
 
   console.log("\n✅ Verifier deployed to:", address);
 
-  // Optional: wait a few blocks so Etherscan picks up the bytecode
+  
   const tx = verifier.deploymentTransaction();
   await tx.wait(5);
 
-  // Optional: Verify on Etherscan
+  
   try {
     await hre.run("verify:verify", {
       address,
