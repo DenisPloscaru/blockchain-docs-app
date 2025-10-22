@@ -1,5 +1,5 @@
 
-// Import the JSON as the default object, then read its .address
+
 import contractAddress from "./contract-address.json";
 export const CONTRACT_ADDRESS = contractAddress.address;
 
@@ -29,7 +29,7 @@ export const CONTRACT_ABI = [
     "stateMutability": "view", "type": "function"
   },
   {
-    // auto-generated getter for public mapping `docs`
+   
     "inputs": [{ "internalType": "bytes32", "name": "hash", "type": "bytes32" }],
     "name": "docs",
     "outputs": [
