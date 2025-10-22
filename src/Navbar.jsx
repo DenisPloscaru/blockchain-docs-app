@@ -1,4 +1,4 @@
-// src/Navbar.jsx
+// 
 import { NavLink } from "react-router-dom";
 
 export default function Navbar() {
@@ -30,7 +30,7 @@ export default function Navbar() {
           </span>
         </div>
 
-        {/* Right: Nav links */}
+        {/*  Nav links */}
         <div style={{ display: "flex", gap: "18px" }}>
           <NavLink
             to="/"
