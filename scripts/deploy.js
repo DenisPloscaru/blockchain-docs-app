@@ -1,12 +1,28 @@
-import "dotenv/config";
-import "@nomicfoundation/hardhat-verify";
-import hre, { run } from "hardhat";
+import hre from "hardhat";
 
 async function main() {
-  await run("verify:verify", {
-    address: "0xd2a0382fe7e3aB9E2Eb28386d3479b0cE1be6951",
-    constructorArguments: [], // add args if your constructor has any
-  });
+  // Deploy
+  const Verifier = await hre.ethers.getContractFactory("Verifier");
+  const verifier = await Verifier.deploy();
+  await verifier.waitForDeployment();
+  const address = await verifier.getAddress();
+
+  console.log("\n✅ Verifier deployed to:", address);
+
+  
+  const tx = verifier.deploymentTransaction();
+  await tx.wait(5);
+
+  
+  try {
+    await hre.run("verify:verify", {
+      address,
+      constructorArguments: [],
+    });
+    console.log("🔎 Etherscan verification: success");
+  } catch (err) {
+    console.log("ℹ️ Verification skipped/failed:", err.message || err);
+  }
 }
 
 main().catch((e) => {
